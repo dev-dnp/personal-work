@@ -24,23 +24,39 @@ BEGIN
         ORDER BY Data_Registo DESC;
 
     -- SE O UTILIZADOR ENVIAR ZERO (0) ENTAO A FATURA É FECHADA
-    IF @Operacao = 0 AND @NuEncomendaRegistada IS NOT NULL
+    IF @Operacao = 0
     BEGIN
+
+        IF @NuEncomendaRegistada IS NULL
+        BEGIN
+            PRINT 'NENHUMA FATURA ABERTA ENCONTRADA!';
+            RETURN(0);
+        END
 
         BEGIN TRANSACTION
 
-        EXEC sp_fechar_encomenda @NuEncomenda = @NuEncomendaRegistada;
-        IF @@ERROR <> 0
-        BEGIN
-            PRINT 'Ocorreu um erro ao processar ao fechar a fatura!';
-            ROLLBACK;
-            RETURN(0);
-        END
-        ELSE
-        BEGIN
-            COMMIT;
-            RETURN(0)
-        END
+            EXEC sp_fechar_encomenda @NuEncomenda = @NuEncomendaRegistada;
+           
+            IF @@ERROR <> 0
+                BEGIN
+                    PRINT 'Ocorreu um erro ao processar ao fechar a fatura!';
+                    ROLLBACK;
+                    RETURN(0);
+                END
+            ELSE
+                BEGIN
+                    UPDATE Tb_Encomenda SET Estado = 0 WHERE Nu_Encomenda = @NuEncomendaRegistada;
+
+                    IF @@ERROR <> 0
+                    BEGIN
+                        PRINT 'Ocorreu um erro ao atualizar o estado da encomenda para zero (0)';
+                        ROLLBACK;
+                        RETURN(0);
+                    END
+
+                    COMMIT;
+                    RETURN(0)
+                END
     END
 
     -- PROCURAR PRODUTO
@@ -103,14 +119,21 @@ GO
 ----------------------------------------------------------------------------------
 
 EXEC sp_venda 
-    @NomeCliente = 'Domingos Pedro',
-    @NuProduto = 7,
-    @QuantidadeProduto = 10,
+    @Operacao = 0,
     @NuFuncionario = 1,
-    @Operacao = 0;
+    @NomeCliente = 'José Fernandes',
+    @NuProduto = 4,
+    @QuantidadeProduto = 20
 GO
 
 SELECT * from Tb_Cliente;
 SELECT * from Tb_Encomenda;
 SELECT * from Tb_Detalhe_Encomenda;
 SELECT * from Tb_Estoque;
+
+
+
+
+DELETE from Tb_Cliente;
+DELETE from Tb_Detalhe_Encomenda;
+DELETE from Tb_Encomenda;
