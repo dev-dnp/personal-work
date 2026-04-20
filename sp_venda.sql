@@ -6,7 +6,7 @@ CREATE OR ALTER PROCEDURE sp_venda
     @NuProduto INT,
     @QuantidadeProduto INT,
     @NuFuncionario INT,
-    @Operacao INT
+    @Operacao INT = 1
 )
 AS
 BEGIN 
@@ -26,8 +26,37 @@ BEGIN
     -- SE O UTILIZADOR ENVIAR ZERO (0) ENTAO A FATURA É FECHADA
     IF @Operacao = 0
     BEGIN
-        UPDATE Tb_Encomenda SET Estado = 0 WHERE (Estado = 1 AND Nu_Funcionario = @NuFuncionario);
-        RETURN(0);
+
+        IF @NuEncomendaRegistada IS NULL
+        BEGIN
+            PRINT 'NENHUMA FATURA ABERTA ENCONTRADA!';
+            RETURN(0);
+        END
+
+        BEGIN TRANSACTION
+
+            EXEC sp_fechar_encomenda @NuEncomenda = @NuEncomendaRegistada;
+           
+            IF @@ERROR <> 0
+                BEGIN
+                    PRINT 'Ocorreu um erro ao processar ao fechar a fatura!';
+                    ROLLBACK;
+                    RETURN(0);
+                END
+            ELSE
+                BEGIN
+                    UPDATE Tb_Encomenda SET Estado = 0 WHERE Nu_Encomenda = @NuEncomendaRegistada;
+
+                    IF @@ERROR <> 0
+                    BEGIN
+                        PRINT 'Ocorreu um erro ao atualizar o estado da encomenda para zero (0)';
+                        ROLLBACK;
+                        RETURN(0);
+                    END
+
+                    COMMIT;
+                    RETURN(0)
+                END
     END
 
     -- PROCURAR PRODUTO
@@ -77,17 +106,12 @@ BEGIN
             WHERE (Nu_Encomenda = @NuEncomendaRegistada AND Nu_Produto = @NuProduto)
             PRINT 'QUANTIDADE DO PRODUTO ATUALIZADA COM SUCESSO!';
 
-        UPDATE Tb_Estoque SET Quantidade = Quantidade - @QuantidadeProduto WHERE Nu_Produto = @NuProduto;
-        RETURN(0)
-
+        RETURN(0);
     END
 
     -- REGISTAR O PRODUTO NO DETALHE DA FATURA PORQUE NAO FOI ADICIONADO AINDA
     INSERT INTO Tb_Detalhe_Encomenda (Nu_Encomenda, Nu_Produto, Quantidade) 
         VALUES (@NuEncomendaRegistada, @NuProduto, @QuantidadeProduto);
-    
-    UPDATE Tb_Estoque SET Quantidade = Quantidade - @QuantidadeProduto WHERE Nu_Produto = @NuProduto;
-
     
 END
 GO
@@ -95,11 +119,11 @@ GO
 ----------------------------------------------------------------------------------
 
 EXEC sp_venda 
-    @NomeCliente = 'Domingos Pedro',
-    @NuProduto = 7,
-    @QuantidadeProduto = 5,
+    @Operacao = 0,
     @NuFuncionario = 1,
-    @Operacao = 1
+    @NomeCliente = 'José Fernandes',
+    @NuProduto = 4,
+    @QuantidadeProduto = 20
 GO
 
 SELECT * from Tb_Cliente;
@@ -107,6 +131,9 @@ SELECT * from Tb_Encomenda;
 SELECT * from Tb_Detalhe_Encomenda;
 SELECT * from Tb_Estoque;
 
-DELETE FROM Tb_Detalhe_Encomenda;
-DELETE FROM Tb_Encomenda;
-DELETE FROM Tb_Cliente;
+
+
+
+DELETE from Tb_Cliente;
+DELETE from Tb_Detalhe_Encomenda;
+DELETE from Tb_Encomenda;

@@ -1,6 +1,6 @@
 
 
-CREATE OR ALTER PROCEDURE sp_fechar_encomenda
+CREATE OR ALTER PROCEDURE sp_concluir_venda
 (
     @NuEncomenda INT
 )
@@ -32,9 +32,10 @@ BEGIN
             UPDATE Tb_Detalhe_Encomenda SET Estado = 0 WHERE Nu_Encomenda = @NuEncomenda AND Nu_Produto = @NuProduto;
         END
 
-    EXEC sp_fechar_encomenda @NuEncomenda = @NuEncomenda;
+    EXEC sp_concluir_venda @NuEncomenda = @NuEncomenda;
 
 END
 
-SELECT * from Tb_Encomenda;
+-- SELECT * from Tb_Encomenda;
 SELECT * from sys.procedures;
+
