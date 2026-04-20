@@ -24,10 +24,23 @@ BEGIN
         ORDER BY Data_Registo DESC;
 
     -- SE O UTILIZADOR ENVIAR ZERO (0) ENTAO A FATURA É FECHADA
-    IF @Operacao = 0
+    IF @Operacao = 0 AND @NuEncomendaRegistada IS NOT NULL
     BEGIN
-        UPDATE Tb_Encomenda SET Estado = 0 WHERE (Estado = 1 AND Nu_Funcionario = @NuFuncionario);
-        RETURN(0);
+
+        BEGIN TRANSACTION
+
+        EXEC sp_fechar_encomenda @NuEncomenda = @NuEncomendaRegistada;
+        IF @@ERROR <> 0
+        BEGIN
+            PRINT 'Ocorreu um erro ao processar ao fechar a fatura!';
+            ROLLBACK;
+            RETURN(0);
+        END
+        ELSE
+        BEGIN
+            COMMIT;
+            RETURN(0)
+        END
     END
 
     -- PROCURAR PRODUTO
@@ -77,17 +90,12 @@ BEGIN
             WHERE (Nu_Encomenda = @NuEncomendaRegistada AND Nu_Produto = @NuProduto)
             PRINT 'QUANTIDADE DO PRODUTO ATUALIZADA COM SUCESSO!';
 
-        UPDATE Tb_Estoque SET Quantidade = Quantidade - @QuantidadeProduto WHERE Nu_Produto = @NuProduto;
-        RETURN(0)
-
+        RETURN(0);
     END
 
     -- REGISTAR O PRODUTO NO DETALHE DA FATURA PORQUE NAO FOI ADICIONADO AINDA
     INSERT INTO Tb_Detalhe_Encomenda (Nu_Encomenda, Nu_Produto, Quantidade) 
         VALUES (@NuEncomendaRegistada, @NuProduto, @QuantidadeProduto);
-    
-    UPDATE Tb_Estoque SET Quantidade = Quantidade - @QuantidadeProduto WHERE Nu_Produto = @NuProduto;
-
     
 END
 GO
@@ -96,12 +104,13 @@ GO
 
 EXEC sp_venda 
     @NomeCliente = 'Domingos Pedro',
-    @NuProduto = 2,
-    @QuantidadeProduto = 14,
+    @NuProduto = 7,
+    @QuantidadeProduto = 10,
     @NuFuncionario = 1,
-    @Operacao = 1
+    @Operacao = 0;
 GO
 
 SELECT * from Tb_Cliente;
 SELECT * from Tb_Encomenda;
 SELECT * from Tb_Detalhe_Encomenda;
+SELECT * from Tb_Estoque;

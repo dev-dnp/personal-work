@@ -7,8 +7,6 @@ CREATE OR ALTER PROCEDURE sp_fechar_encomenda
 AS
 BEGIN
 
-    BEGIN TRAN
-
         DECLARE @NuDetalheAberta INT
         DECLARE @NuProduto INT
         DECLARE @Quantidade INT
@@ -32,12 +30,6 @@ BEGIN
         BEGIN
             UPDATE Tb_Estoque SET Quantidade = (Quantidade - @Quantidade) WHERE Nu_Produto = @NuProduto;
             UPDATE Tb_Detalhe_Encomenda SET Estado = 0 WHERE Nu_Encomenda = @NuEncomenda AND Nu_Produto = @NuProduto;
-            COMMIT;
-        END
-        ELSE
-        BEGIN
-            ROLLBACK;
-            RETURN;
         END
 
     EXEC sp_fechar_encomenda @NuEncomenda = @NuEncomenda;
@@ -45,3 +37,4 @@ BEGIN
 END
 
 SELECT * from Tb_Encomenda;
+SELECT * from sys.procedures;
