@@ -1,4 +1,6 @@
 
+-- CREATE DATABASE Vendas
+-- USE Vendas
 
 CREATE TABLE Tb_Categoria (
     Nu_Categoria INT PRIMARY KEY IDENTITY(1,1),
@@ -96,18 +98,18 @@ CREATE TABLE Tb_Estoque (
         CHECK (Quantidade >= 0)
 );
 
--- CREATE TABLE Tb_Movimentacao_Estoque (
---     Nu_Movimentacao INT PRIMARY KEY IDENTITY(1,1),
---     Nu_Produto INT NOT NULL,
---     Tipo NVARCHAR(20) NOT NULL,
---     Quantidade INT,
---     Estado BIT DEFAULT 1,
---     Data DATETIME DEFAULT GETDATE(),
+CREATE TABLE Tb_Movimentacao_Estoque (
+    Nu_Movimentacao INT PRIMARY KEY IDENTITY(1,1),
+    Nu_Produto INT NOT NULL,
+    Tipo NVARCHAR(20) NOT NULL,
+    Quantidade INT,
+    Estado BIT DEFAULT 1,
+    Data DATETIME DEFAULT GETDATE(),
 
---     CONSTRAINT CK_Movimentacao_Quantidade_Positiva
---         CHECK (Quantidade >= 0),
+    CONSTRAINT CK_Movimentacao_Quantidade_Positiva
+        CHECK (Quantidade >= 0),
 
---     CONSTRAINT FK_Produto_Movimentacao_Estoque
---         FOREIGN KEY (Nu_Produto)
---         REFERENCES Tb_Produto(Nu_Produto)
--- );
+    CONSTRAINT FK_Produto_Movimentacao_Estoque
+        FOREIGN KEY (Nu_Produto)
+        REFERENCES Tb_Produto(Nu_Produto)
+);
