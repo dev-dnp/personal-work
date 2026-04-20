@@ -95,7 +95,7 @@ GO
 ----------------------------------------------------------------------------------
 
 EXEC sp_venda 
-    @NomeCliente = 'Shey',
+    @NomeCliente = 'Domingos Pedro',
     @NuProduto = 2,
     @QuantidadeProduto = 14,
     @NuFuncionario = 1,
