@@ -36,7 +36,7 @@ BEGIN
 
         BEGIN TRANSACTION
 
-            EXEC sp_fechar_encomenda @NuEncomenda = @NuEncomendaRegistada;
+            EXEC sp_concluir_venda @NuEncomenda = @NuEncomendaRegistada;
            
             IF @@ERROR <> 0
                 BEGIN
@@ -130,11 +130,12 @@ GO
 ----------------------------------------------------------------------------------
 
 EXEC sp_venda 
-    @Operacao = 'VENDER',
+    @Operacao = 'FINALIZAR',
     @NuFuncionario = 1,
     @NomeCliente = 'José Fernandes',
     @NuProduto = 1,
-    @QuantidadeProduto = 20
+    @QuantidadeProduto = 20,
+    @AtualizarQuantidade = 'SUBTRACAO'
 GO
 
 SELECT * from Tb_Cliente;
