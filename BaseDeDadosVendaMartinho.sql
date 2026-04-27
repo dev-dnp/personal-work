@@ -1,6 +1,6 @@
 
--- CREATE DATABASE Vendas
--- USE Vendas
+-- CREATE DATABASE vendas
+-- USE vendas
 
 CREATE TABLE Tb_Categoria (
     Nu_Categoria INT PRIMARY KEY IDENTITY(1,1),

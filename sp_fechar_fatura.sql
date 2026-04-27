@@ -35,7 +35,7 @@ BEGIN
     EXEC sp_concluir_venda @NuEncomenda = @NuEncomenda;
 
 END
-
+GO
 -- SELECT * from Tb_Encomenda;
 SELECT * from sys.procedures;
 

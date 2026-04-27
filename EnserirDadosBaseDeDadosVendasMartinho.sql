@@ -1,37 +1,12 @@
 INSERT INTO Tb_Categoria (Nome) VALUES
-('Gestor'),
-('Vendedor'),
 ('Caixa'),
-('Logística'),
-('Armazém'),
-('Supervisor'),
-('Administrador'),
-('Marketing'),
-('Financeiro'),
-('RH'),
-('Técnico'),
-('Operador'),
-('Estagiário'),
-('Compras'),
-('Direção');
+('Logistica'),
+('Gestor')
 GO
 
 INSERT INTO Tb_Cliente (Nome) VALUES
 ('João Pedro'),
-('Maria Silva'),
-('Domingos Pedro'),
-('Ana Paula'),
-('José Manuel'),
-('Fátima Sousa'),
-('Pedro Gomes'),
-('Helena Costa'),
-('Rui Miguel'),
-('Sandra Lopes'),
-('Bruno Silva'),
-('Lúcia Fernandes'),
-('Tiago Santos'),
-('Paulo Mendes'),
-('Diana Almeida');
+('Maria Silva')
 GO
 
 INSERT INTO Tb_Produto (Nome, Descricao, Preco, Estado) VALUES
@@ -68,40 +43,21 @@ INSERT INTO Tb_Produto (Nome, Descricao, Preco, Estado) VALUES
 GO
 
 INSERT INTO Tb_Funcionario (Nome, Nu_Categoria, Data_Ingresso) VALUES
-('João Matos', 1, '2023-01-10'),
-('Maria Santos', 2, '2023-02-15'),
-('Carlos Pinto', 3, '2023-03-20'),
-('Ana Costa', 4, '2023-04-25'),
-('José Lima', 5, '2023-05-10'),
-('Fátima Dias', 6, '2023-06-18'),
-('Pedro Rocha', 7, '2023-07-22'),
-('Helena Martins', 8, '2023-08-12'),
-('Rui Almeida', 9, '2023-09-05'),
-('Sandra Pereira', 10, '2023-10-14'),
-('Bruno Gomes', 11, '2023-11-01'),
-('Lúcia Ramos', 12, '2023-12-03'),
-('Tiago Sousa', 13, '2024-01-08'),
-('Paulo Ferreira', 14, '2024-02-11'),
-('Diana Carvalho', 15, '2024-03-19');
+('Domingos Pedro',1, '2023-01-10'),
+('Maria Santos',1, '2023-02-15'),
+('Fátima Dias',1, '2023-06-18'),
+('Pedro Rocha',1, '2023-07-22'),
+('Helena Martins',1, '2023-08-12'),
+('Rui Almeida',1, '2023-09-05'),
+('Sandra Pereira', 1, '2023-10-14'),
+('Diana Carvalho', 1, '2024-03-19');
 GO
 
 
 INSERT INTO Tb_Salario (Salario_Base, Mes, Ano, Nu_Categoria) VALUES
 (50000, 1, 2026, 1),
 (45000, 1, 2026, 2),
-(30000, 1, 2026, 3),
-(28000, 1, 2026, 4),
-(27000, 1, 2026, 5),
-(60000, 1, 2026, 6),
-(80000, 1, 2026, 7),
-(55000, 1, 2026, 8),
-(40000, 1, 2026, 9),
-(35000, 1, 2026, 10),
-(25000, 1, 2026, 11),
-(22000, 1, 2026, 12),
-(20000, 1, 2026, 13),
-(70000, 1, 2026, 14),
-(90000, 1, 2026, 15);
+(30000, 1, 2026, 3)
 GO
 
 INSERT INTO Tb_Estoque (Nu_Produto, Quantidade) VALUES

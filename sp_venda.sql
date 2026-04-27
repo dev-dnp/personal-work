@@ -6,7 +6,8 @@ CREATE OR ALTER PROCEDURE sp_venda
     @NuProduto INT,
     @QuantidadeProduto INT,
     @NuFuncionario INT,
-    @Operacao INT = 1
+    @Operacao VARCHAR(20) = 'VENDER',
+    @AtualizarQuantidade VARCHAR(20) = 'ADICAO'
 )
 AS
 BEGIN 
@@ -24,7 +25,7 @@ BEGIN
         ORDER BY Data_Registo DESC;
 
     -- SE O UTILIZADOR ENVIAR ZERO (0) ENTAO A FATURA É FECHADA
-    IF @Operacao = 0
+    IF @Operacao = 'FINALIZAR'
     BEGIN
 
         IF @NuEncomendaRegistada IS NULL
@@ -101,10 +102,20 @@ BEGIN
 
         -- O PRODUTO JA ESTÁ REGISTADO, ENTÃO ATUALIZE A QUANTIDADE
 
-        UPDATE Tb_Detalhe_Encomenda
-            SET Quantidade = @QuantidadeProduto
-            WHERE (Nu_Encomenda = @NuEncomendaRegistada AND Nu_Produto = @NuProduto)
-            PRINT 'QUANTIDADE DO PRODUTO ATUALIZADA COM SUCESSO!';
+        IF @AtualizarQuantidade = 'ADICAO'
+        BEGIN
+            UPDATE Tb_Detalhe_Encomenda
+                SET Quantidade = Quantidade + @QuantidadeProduto
+                WHERE (Nu_Encomenda = @NuEncomendaRegistada AND Nu_Produto = @NuProduto)
+                PRINT 'QUANTIDADE DO PRODUTO ATUALIZADA COM SUCESSO!';
+        END
+        ELSE IF @AtualizarQuantidade = 'SUBTRACAO'
+        BEGIN
+            UPDATE Tb_Detalhe_Encomenda
+                SET Quantidade = Quantidade - @QuantidadeProduto
+                WHERE (Nu_Encomenda = @NuEncomendaRegistada AND Nu_Produto = @NuProduto)
+                PRINT 'QUANTIDADE DO PRODUTO ATUALIZADA COM SUCESSO!';
+        END
 
         RETURN(0);
     END
@@ -119,10 +130,10 @@ GO
 ----------------------------------------------------------------------------------
 
 EXEC sp_venda 
-    @Operacao = 0,
+    @Operacao = 'VENDER',
     @NuFuncionario = 1,
     @NomeCliente = 'José Fernandes',
-    @NuProduto = 4,
+    @NuProduto = 1,
     @QuantidadeProduto = 20
 GO
 
