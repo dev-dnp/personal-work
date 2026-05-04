@@ -1,0 +1,41 @@
+CREATE OR ALTER PROCEDURE sp_estoque_entrada
+(
+    @NuProduto INT,
+    @QtdProduto INT,
+    @TipoMovimento VARCHAR(100) = 'ENTRADA',
+    @NuFuncionario INT,
+    @NuFornecedor INT,
+    @Preco DECIMAL(10,2) = NULL
+)
+AS
+BEGIN
+
+    -- CASO O PRODUTO NÃO EXISTA
+    IF NOT EXISTS (SELECT 1 FROM Tb_Produto WHERE Nu_Produto = @NuProduto)
+    BEGIN
+        PRINT 'O PRODUTO SELECIONADO NÃO EXISTE';
+        RETURN;
+    END
+
+
+    IF NOT EXISTS(SELECT 1 FROM Tb_Estoque WHERE Nu_Produto = @NuProduto)
+        BEGIN
+            INSERT INTO Tb_Estoque(Nu_Produto, Quantidade) VALUES (@NuProduto, @QtdProduto);
+        END
+    ELSE 
+        BEGIN
+            UPDATE Tb_Estoque SET Quantidade = Quantidade + @QtdProduto WHERE Nu_Produto = @NuProduto;
+        END
+    
+
+    INSERT INTO Tb_Movimentacao_Estoque(Tipo, Nu_Fornecedor, Nu_Funcionario, Nu_Produto, Preco, Quantidade)
+    VALUES (@TipoMovimento, @NuFornecedor, @NuFuncionario, @NuProduto, @Preco, @QtdProduto);
+
+
+END
+
+
+EXEC sp_estoque_entrada 1, 20, 'ENTRADA', 1,1,2000
+
+SELECT * FROM Tb_Movimentacao_Estoque;
+SELECT * FROM Tb_Estoque;
